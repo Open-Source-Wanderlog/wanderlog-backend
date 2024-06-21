@@ -42,8 +42,7 @@ public class FlyCompanyController {
         TravelDestination travelDestination = travelDestinationRepository.findById(travelDestinationId)
                 .orElseThrow(()->new ResourceNotFoundException("No se encuentra el destino turistico con el id="+travelDestinationId));
         validateFlyCompany(flyCompany);
-        //flyCompany.setDate(LocalDate.now());
-        //flyCompany.setDevolutionDate(LocalDate.now().plusDays(3));
+        flyCompany.setTravelDestination(travelDestination); 
         return new ResponseEntity<FlyCompany>(flyCompanyRepository.save(flyCompany), HttpStatus.CREATED);
     }
 

@@ -46,9 +46,24 @@ public class FlyCompanyController {
         return new ResponseEntity<FlyCompany>(flyCompanyRepository.save(flyCompany), HttpStatus.CREATED);
     }
 
+    //Endpoint (url): http://localhost:8080/api/wanderlog/v1/travelDestinations/{travelDestinationId}/flyCompanies/{flyCompanyId}
+//Method: PUT
+    @Transactional
+    @PutMapping("/travelDestinations/{travelDestinationId}/flyCompanies/{flyCompanyId}")
+    public ResponseEntity<FlyCompany> updateFlyCompanyByTravelDestination(@PathVariable(name = "travelDestinationId") Long travelDestinationId, @PathVariable(name = "flyCompanyId") Long flyCompanyId, @RequestBody FlyCompany newFlyCompany){
+        TravelDestination travelDestination = travelDestinationRepository.findById(travelDestinationId)
+                .orElseThrow(()->new ResourceNotFoundException("No se encuentra el destino turistico con el id="+travelDestinationId));
+        FlyCompany flyCompany = flyCompanyRepository.findById(flyCompanyId)
+                .orElseThrow(()->new ResourceNotFoundException("No se encuentra la compañia de vuelo con el id="+flyCompanyId));
+        validateFlyCompany(newFlyCompany);
+        newFlyCompany.setTravelDestination(travelDestination);
+        newFlyCompany.setId(flyCompanyId);
+        return new ResponseEntity<FlyCompany>(flyCompanyRepository.save(newFlyCompany), HttpStatus.OK);
+    }
+
 
     private void validateFlyCompany(FlyCompany flyCompany){
-        if(flyCompany.getImageUrl()==null || flyCompany.getImageUrl().trim().isEmpty()){
+        if(flyCompany.getImage_url()==null || flyCompany.getImage_url().trim().isEmpty()){
             throw new ValidationException("La URL de la imagen no puede estar vacía");
         }
         if(flyCompany.getName()==null || flyCompany.getName().trim().isEmpty()){
@@ -62,7 +77,7 @@ public class FlyCompanyController {
         if(flyCompany.getName().length()>255){
             throw new ValidationException("El nombre de la compañia de vuelo no puede tener mas de 255 caracteres");
         }
-        if(flyCompany.getImageUrl().length()>255){
+        if(flyCompany.getImage_url().length()>255){
             throw new ValidationException("La URL de la imagen no puede tener mas de 255 caracteres");
         }
         if(flyCompany.getDescription().length()>2000){

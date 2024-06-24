@@ -27,7 +27,7 @@ public class Hotel {
     private String description;
 
     @Column(name = "image_url",length = 255, nullable = false)
-    private String imageUrl;
+    private String image_url;
 
     @Column(name = "price", nullable = false)
     private float price;

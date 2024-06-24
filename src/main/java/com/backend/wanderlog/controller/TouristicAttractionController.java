@@ -42,14 +42,13 @@ public class TouristicAttractionController {
         TravelDestination travelDestination = travelDestinationRepository.findById(travelDestinationId)
                 .orElseThrow(()->new ResourceNotFoundException("No se encuentra el destino turistico con el id="+travelDestinationId));
         validateTouristicAttraction(touristicAttraction);
-        //touristicAttraction.setDate(LocalDate.now());
-        //touristicAttraction.setDevolutionDate(LocalDate.now().plusDays(3));
+        touristicAttraction.setTravelDestination(travelDestination); // Asociar el TravelDestination con la TouristicAttraction
         return new ResponseEntity<TouristicAttraction>(touristicAttractionRepository.save(touristicAttraction), HttpStatus.CREATED);
     }
 
 
     private void validateTouristicAttraction(TouristicAttraction touristicAttraction){
-        if(touristicAttraction.getImageUrl()==null || touristicAttraction.getImageUrl().trim().isEmpty()){
+        if(touristicAttraction.getImage_url()==null || touristicAttraction.getImage_url().trim().isEmpty()){
             throw new ValidationException("La URL de la imagen no puede estar vacía");
         }
         if(touristicAttraction.getName()==null || touristicAttraction.getName().trim().isEmpty()){
@@ -63,7 +62,7 @@ public class TouristicAttractionController {
         if(touristicAttraction.getName().length()>255){
             throw new ValidationException("El nombre de la compañia de vuelo no puede tener mas de 255 caracteres");
         }
-        if(touristicAttraction.getImageUrl().length()>255){
+        if(touristicAttraction.getImage_url().length()>255){
             throw new ValidationException("La URL de la imagen no puede tener mas de 255 caracteres");
         }
         if(touristicAttraction.getDescription().length()>2000){

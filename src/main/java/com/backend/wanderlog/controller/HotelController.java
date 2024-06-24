@@ -34,22 +34,19 @@ public class HotelController {
         return new ResponseEntity<List<Hotel>>(hotelRepository.findHotelsByTravelDestinationId(travelDestinationId),HttpStatus.OK);
     }
 
-    //Endopint (url): http://localhost:8080/api/wanderlog/v1/library/travelDestinations/1/hotels
-    //Method: POST
     @Transactional
     @PostMapping("/travelDestinations/{travelDestinationId}/hotels")
     public ResponseEntity<Hotel> createHotelsByTravelDestination(@PathVariable(name = "travelDestinationId")Long travelDestinationId, @RequestBody Hotel hotel){
         TravelDestination travelDestination = travelDestinationRepository.findById(travelDestinationId)
-                        .orElseThrow(()->new ResourceNotFoundException("No se encuentra el destino turistico con el id="+travelDestinationId));
+                .orElseThrow(()->new ResourceNotFoundException("No se encuentra el destino turistico con el id="+travelDestinationId));
         validateHotel(hotel);
-        //hotel.setDate(LocalDate.now());
-        //hotel.setDevolutionDate(LocalDate.now().plusDays(3));
+        hotel.setTravelDestination(travelDestination);
         return new ResponseEntity<Hotel>(hotelRepository.save(hotel), HttpStatus.CREATED);
     }
 
 
     private void validateHotel(Hotel hotel){
-        if(hotel.getImageUrl()==null || hotel.getImageUrl().trim().isEmpty()){
+        if(hotel.getImage_url()==null || hotel.getImage_url().trim().isEmpty()){
             throw new ValidationException("La URL de la imagen no puede estar vacía");
         }
         if(hotel.getName()==null || hotel.getName().trim().isEmpty()){
@@ -63,7 +60,7 @@ public class HotelController {
         if(hotel.getName().length()>255){
             throw new ValidationException("El nombre del hotel no puede tener mas de 255 caracteres");
         }
-        if(hotel.getImageUrl().length()>255){
+        if(hotel.getImage_url().length()>255){
             throw new ValidationException("La URL de la imagen no puede tener mas de 255 caracteres");
         }
         if(hotel.getDescription().length()>2000){
